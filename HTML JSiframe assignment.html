@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {  
+    background-color: #807b29
+}
+
+h1 
+{color: #d4ca4a; text-align: center left;}
+
+p 
+{color: #594939; font-family: "Times New Roman", Times, serif; font-size: 15px;}
+
+.FlexBigBox {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px; /* space between inputs and map */
+}
+
+.FlexSeperator {
+    flex: 1;
+}
+
+iframe {
+    flex: 1;
+    display: block;
+    margin-left: auto;  
+    margin-top: auto;
+}
+</style>  
+</head>
+<body>
+<h1>  Location Finder (MINI) </h1>
+<p> Insert the details of the location</p><br><br>
+<div class = FlexBigBox>
+    <div class = FlexSeperator>
+        <label for = "StreetName">Insert Street name </label><br><br>
+        <input type = "text"  id = "StreetName" name = "StreetName" placeholder = "EXAMPLE: 221B Baker Street" size = "70"><br><br><br>
+        <label for = "CityName"> Insert City name </label><br><br>
+        <input type = "text"  id = "CityName" name = "CityName" placeholder = "EXAMPLE: London" size = "40"><br><br><br>
+        <input type="button" onclick="search() " class = search value = "Search"><br><br><br>
+    </div>
+    <iframe id = "mapFrame" class = "mapFrame"
+    src="https://www.google.com/maps?q=New+York&output=embed" title="description"
+    width="40%" height = "500px" frameborder = "0" >
+</iframe>
+</div>
+</body>
+<script>
+function search() { 
+    const street = document.getElementById("StreetName").value.trim()
+    const city = document.getElementById("CityName").value.trim()
+    const inputvalues = encodeURIComponent(`${street} ${city}`);
+    const mapFrame = document.getElementById("mapFrame")
+    document.getElementById('mapFrame').src = `https://www.google.com/maps?q=${inputvalues}&output=embed`;
+}
+
+</script>
+</html>

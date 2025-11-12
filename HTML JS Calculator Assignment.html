@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    h1 {
+        color: #553;
+    }
+    p {
+        font-size: 14px;
+        line-height: 1.6;
+    }
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: black;
+}
+
+ul li {
+  float: left;
+  border-right:2px solid white;
+}
+
+ul li:last-child {
+  border-right: none;
+}
+
+ul li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 16px 24px;
+  text-decoration: none;
+}
+
+ul li a:hover {
+  background-color: #A37000;
+}
+.active {
+  background-color: #B22222;
+}
+</style>
+
+
+<title>Calculator Task 1</title>
+</head>
+<body text ="6E631A" bgcolor="#DBD85E">
+<ul>
+  <li><a href="HTML JS Calculator Assignment.html">Task 1</a></li>
+  <li><a href="HTML JS Calculator Assignment 2.html">Task 2</a></li>
+  <li><a href="HTML JS Calculator Assignment 3.html">Task 3</a></li>
+</ul><br>
+<h1>Task 1. Calculator with text box and dropdown list</h1>
+    <p id="demo">Input the values below</p>
+    <label for="fnumber"></label>
+    <input type= "number" id="fnumber" placeholder="0">
+    <select name = "operation" id="operations">
+        <option value="add">+</option>
+        <option value="subtract">-</option>
+        <option value="multiply">*</option>
+        <option value="divide">/</option>
+    </select>
+      <label for="snumber"></label>
+      <input type= "number" id="snumber" placeholder="0">
+      <button onclick="calculate() "class = "equals">=</button><p id = "result"><b>Press = mark!</b></p>
+
+
+
+<script>
+function calculate() {
+let x = document.getElementById("fnumber").value;
+let y = document.getElementById("snumber").value;
+let operation = document.getElementById("operations").value;
+let result;
+if (operation === "add") {
+    result = Number(x) + Number(y);
+} else if (operation === "subtract") {
+    result = Number(x) - Number(y);
+} else if (operation === "multiply") {
+    result = Number(x) * Number(y);
+} else if (operation === "divide") {
+    result = Number(x) / Number(y);
+}
+document.getElementById('result').innerHTML = "<b>Result: </b>" + result;   
+}                                                                         
+</script>
+</body>
+</html>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> Finnish Personal Identity Number Validator & Generator </title>
+<style>
+body { 
+    font-family: Arial; padding: 20px; background-color: blanchedalmond;
+}
+h1 { 
+    text-align: center; color: #444; 
+}
+h2 { 
+    color: #333;
+ }
+p {
+    font-family:Verdana, Geneva, Tahoma, sans-serif; font-size: 14px;
+    color: #222;
+}
+input { 
+    margin: 6px; padding: 6px; width: 200px; 
+}
+button { 
+    padding: 10px 14px; 
+}
+button:hover { 
+    color: white; cursor: pointer; 
+}
+pre { 
+    background: whitesmoke ; 
+    padding: 10px;
+ }
+.instructions {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+<h1> JavaScripts Final Task </h1>
+<br><br>
+
+
+<h2> Generate Check Character </h2>
+<form id="genForm" onsubmit="return generateCheckChar();">
+    <p>Insert Characters</p>
+    <input id="genInput" placeholder="Example: 131052-308">
+    <button type="submit">Generate</button>
+    <pre id="genResult"></pre>
+</form>
+<hr><hr>
+
+<h2> Validate Finnish Personal Identity Code </h2>
+<form id="picForm" onsubmit="return validatePIC();">
+    <p>Insert Personal Identity Code</p>
+    <input id="idInput" placeholder="Example: 131052-308T">
+    <button type="submit">Validate</button>
+    <pre id="result"></pre>
+</form><hr><hr>
+<h2> Generate PIC through data </h2>
+<div class="instructions">
+<b>How to Enter Information:</b><br><br>
+1. Enter date of birth in the format <b>DD/MM/YYYY</b>.<br>
+     Day (01–31), Month (01–12), Year <br>
+
+2. Choose gender/sex:<br>
+3. Click "Generate PIC" to create a valid Finnish Personal Identity Code based on the provided information.
+</div>
+
+
+<br>
+<label><b>Date of Birth (DD/MM/YYYY):</b></label><br>
+<input id="dob" placeholder="DD/MM/YYYY">
+<br><br>
+
+<label><b>Sex:</b></label>
+<select id="sex">
+  <option value="">Select sex</option>
+  <option value="M">Male</option>
+  <option value="F">Female</option>
+</select>
+<br><br>
+<button onclick="generatePIC()">Generate PIC</button>
+<pre id="output"></pre> <!-- FIXED (was missing) -->
+
+<script>
+const checkChars = "0123456789ABCDEFHJKLMNPRSTUVWXY";
+function parseCentury(sign) {
+    return sign === "+" ? 1800 :
+           sign === "-" ? 1900 :
+           sign === "A" ? 2000 : null;
+}
+
+function calculateCheckChar(baseNumber) {
+    return checkChars[ Number(baseNumber) % 31 ];
+}
+
+function determineCenturySign(year) {
+    if (year >= 1800 && year <= 1899) return "+";
+    if (year >= 1900 && year <= 1999) return "-";
+    if (year >= 2000 && year <= 2099) return "A";
+    return null;
+}
+
+function getAge(birthDate) {
+ const reference = new Date(2021, 4, 26); // May 26, 2021
+    let years = reference.getFullYear() - birthDate.getFullYear();
+    let months = reference.getMonth() - birthDate.getMonth();
+    let days = reference.getDate() - birthDate.getDate();
+
+    if (days < 0) {
+        months--;
+        days += new Date(reference.getFullYear(), reference.getMonth(), 0).getDate();
+    }
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    return { years, months, days };
+}
+function validatePIC() {
+    const input = document.getElementById("idInput").value.trim().toUpperCase();
+    const res = document.getElementById("result");
+    res.textContent = "";
+
+    const regex = /^(\d{6})([+\-A])(\d{3})([0-9A-Y])$/;
+    const match = input.match(regex);
+
+    if (!match) {
+        res.textContent = "Format incorrect";
+        return false;
+    }
+
+    const [, ddmmyy, sign, individual, check] = match;
+
+    const day = Number(ddmmyy.slice(0, 2));
+    const month = Number(ddmmyy.slice(2, 4));
+    const year = Number(ddmmyy.slice(4, 6));
+    const century = parseCentury(sign);
+
+    const fullYear = century + year;
+
+    const birthDate = new Date(fullYear, month - 1, day);
+    if (
+        birthDate.getFullYear() !== fullYear ||
+        birthDate.getMonth() !== month - 1 ||
+        birthDate.getDate() !== day
+    ) {
+        res.textContent = "Invalid date.";
+        return false;
+    }
+
+    const expectedCheck = calculateCheckChar(ddmmyy + individual);
+    if (expectedCheck !== check) {
+        res.textContent = "Invalid check character.";
+        return false;
+    }
+
+    const sex = Number(individual) % 2 === 0 ? "Female" : "Male";
+    const age = getAge(birthDate);
+
+    res.textContent =
+        `Valid: True\n` +
+        `Sex: ${sex}\n` +
+        `Age: ${age.years}y ${age.months}m ${age.days}d`;
+
+    return false;
+}
+
+function generateCheckChar() {
+    const input = document.getElementById("genInput").value.trim().toUpperCase();
+    const res = document.getElementById("genResult");
+    res.textContent = "";
+
+    const regex = /^(\d{6})([+\-A])(\d{3})$/;
+
+    const match = input.match(regex);
+    if (!match) {
+        res.textContent = "Format must be ddmmyyXnnn";
+        return false;
+    }
+
+    const [, ddmmyy, sign, individual] = match;
+
+    const fullYear = parseCentury(sign) + Number(ddmmyy.slice(4, 6));
+    const day = Number(ddmmyy.slice(0, 2));
+    const month = Number(ddmmyy.slice(2, 4));
+
+    const date = new Date(fullYear, month - 1, day);
+    if (
+        date.getFullYear() !== fullYear ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
+    ) {
+        res.textContent = "Invalid date.";
+        return false;
+    }
+
+    res.textContent = "Check character: " + calculateCheckChar(ddmmyy + individual);
+    return false;
+}
+function generateIndividualNumber(sex) {
+    let number;
+    while (true) {
+        number = Math.floor(Math.random() * 898) + 2; // 2–899
+
+        if (sex === "M" && number % 2 === 1) return String(number).padStart(3, "0");
+        if (sex === "F" && number % 2 === 0) return String(number).padStart(3, "0");
+    }
+}
+
+function generatePIC() {
+    const out = document.getElementById("output");
+    out.textContent = "";
+
+    const dob = document.getElementById("dob").value.trim();
+    const sex = document.getElementById("sex").value;
+
+    if (!dob.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+        out.textContent = "Invalid date format. Use DD/MM/YYYY.";
+        return;
+    }
+
+    const [dd, mm, yyyy] = dob.split("/").map(Number);
+
+    const date = new Date(yyyy, mm - 1, dd);
+
+    if (
+        date.getFullYear() !== yyyy ||
+        date.getMonth() !== mm - 1 ||
+        date.getDate() !== dd
+    ) {
+        out.textContent = "Invalid calendar date.";
+        return;
+    }
+
+    if (!sex) {
+        out.textContent = "Please select sex.";
+        return;
+    }
+
+    const century = determineCenturySign(yyyy);
+    const individual = generateIndividualNumber(sex);
+    const YY = String(yyyy % 100).padStart(2, "0");
+    const DD = String(dd).padStart(2, "0");
+    const MM = String(mm).padStart(2, "0");
+
+    const base = `${DD}${MM}${YY}${individual}`;
+    const check = calculateCheckChar(base);
+
+    const PIC = `${DD}${MM}${YY}${century}${individual}${check}`;
+
+    const age = getAge(date);
+
+    out.textContent =
+        `Generated PIC: ${PIC}\n` +
+        `Sex: ${sex === "M" ? "Male" : "Female"}\n` +
+        `Individual number: ${individual}\n` +
+        `Age: ${age.years}y ${age.months}m ${age.days}d\n` +
+        `Valid: true`;
+}
+</script>
+
+</body>
+</html>

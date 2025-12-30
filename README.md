@@ -5,8 +5,8 @@ Web Development Projects and Tasks at LAB.
 https://github.com/MHamzaS45/Web-Development/tree/main
 
 
-🛠️ Technologies Used
--
+# 🛠️ Technologies Used
+
 Tools
 -
 - Visual Studio Code
